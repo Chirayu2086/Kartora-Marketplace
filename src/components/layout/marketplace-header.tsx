@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, Heart, LogOut, MapPin, Package, Search, ShoppingCart } from "lucide-react";
+import { ChevronDown, Heart, LogOut, MapPin, Package, Search, ShoppingCart, ShieldCheck } from "lucide-react";
+import { getSessionAction, logoutAction } from "@/actions/auth";
+import { LoginModal } from "@/components/auth/login-modal";
 import { CATEGORIES } from "@/lib/data/catalog";
 import { getSuggestions } from "@/lib/services/product-service";
 import { buildSearchHref, debounce } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { useCartStore } from "@/stores/cart-store";
-import { LoginModal } from "@/components/auth/login-modal";
 
 export function MarketplaceHeader() {
   const router = useRouter();
@@ -17,12 +18,17 @@ export function MarketplaceHeader() {
   const [showSuggest, setShowSuggest] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const user = useAuthStore((s) => s.user);
+  const hydrate = useAuthStore((s) => s.hydrate);
   const loginOpen = useAuthStore((s) => s.loginOpen);
   const openLogin = useAuthStore((s) => s.openLogin);
   const logout = useAuthStore((s) => s.logout);
   const cartCount = useCartStore((s) => s.items.reduce((n, i) => n + i.qty, 0));
 
   const suggestions = useMemo(() => getSuggestions(q), [q]);
+
+  useEffect(() => {
+    getSessionAction().then((res) => hydrate(res.ok && res.data ? res.data : null));
+  }, [hydrate]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setShowSuggest(false);
@@ -37,19 +43,21 @@ export function MarketplaceHeader() {
 
   const onType = debounce((value: string) => setQ(value), 150);
 
+  const doLogout = async () => {
+    await logoutAction();
+    logout();
+    setAccountOpen(false);
+    router.refresh();
+  };
+
   return (
     <header className="sticky top-0 z-50">
       <div className="bg-brand text-white">
         <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-3 px-3 md:gap-6 md:px-4">
-          <Link href="/" className="flex shrink-0 items-end gap-1" aria-label="Flipkart home">
-            <svg viewBox="0 0 80 80" className="h-8 w-8" aria-hidden="true">
-              <rect width="80" height="80" rx="18" fill="#fff" />
-              <path d="M24 20h15.5c9.8 0 17.5 6.7 17.5 16.5 0 11.4-8.7 17.5-19.5 17.5H35v16h-11V20zm11 10v13h5.5c5.4 0 8.5-2.3 8.5-6.5S45.9 30 40.5 30H35z" fill="#1d4ed8"/>
-              <circle cx="59" cy="22" r="10" fill="#fbbf24" />
-              <path d="M59 12v20M49 22h20" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round"/>
-            </svg>
+          <Link href="/" className="flex shrink-0 items-end gap-1" aria-label="Kartora home">
+            <svg viewBox="0 0 64 64" className="h-8 w-8"><rect width="64" height="64" rx="12" fill="#fff" /><path d="M20 14v36M20 32l16-18M20 32l18 18" stroke="#2563eb" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" fill="none" /><circle cx="46" cy="18" r="5" fill="#f4690c" /></svg>
             <span className="flex flex-col leading-none">
-              <span className="text-lg font-bold italic tracking-tight">Flipkart</span>
+              <span className="text-lg font-bold italic tracking-tight">Kartora</span>
               <span className="text-[10px] italic text-amber-300">Explore Plus ✦</span>
             </span>
           </Link>
@@ -95,10 +103,14 @@ export function MarketplaceHeader() {
                 {user.name.split(" ")[0]}<ChevronDown className="h-3 w-3" />
               </button>
               {accountOpen && (
-                <div className="absolute right-0 top-full z-50 w-48 overflow-hidden rounded-b-sm bg-white py-1 text-gray-800 shadow-lift">
+                <div className="absolute right-0 top-full z-50 w-52 overflow-hidden rounded-b-sm bg-white py-1 text-gray-800 shadow-lift">
+                  <Link href="/account" onClick={() => setAccountOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-brand-light"><Package className="h-4 w-4" />My Account</Link>
                   <Link href="/orders" onClick={() => setAccountOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-brand-light"><Package className="h-4 w-4" />My Orders</Link>
                   <Link href="/wishlist" onClick={() => setAccountOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-brand-light"><Heart className="h-4 w-4" />Wishlist</Link>
-                  <button onClick={() => { logout(); setAccountOpen(false); }} className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-brand-light"><LogOut className="h-4 w-4" />Logout</button>
+                  {user.role === "ADMIN" && (
+                    <Link href="/admin" onClick={() => setAccountOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-brand hover:bg-brand-light"><ShieldCheck className="h-4 w-4" />Admin Dashboard</Link>
+                  )}
+                  <button onClick={doLogout} className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-brand-light"><LogOut className="h-4 w-4" />Logout</button>
                 </div>
               )}
             </div>
