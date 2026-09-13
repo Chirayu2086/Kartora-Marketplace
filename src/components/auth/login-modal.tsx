@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
+import { requestOtpAction, verifyOtpAction } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth-store";
 
@@ -12,15 +13,14 @@ export function LoginModal() {
   const login = useAuthStore((s) => s.login);
   const [stage, setStage] = useState<Stage>("input");
   const [useEmail, setUseEmail] = useState(false);
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const firstField = useRef<HTMLInputElement>(null);
+  const fieldRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    firstField.current?.focus();
+    fieldRef.current?.focus();
     document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeLogin();
     window.addEventListener("keydown", onKey);
@@ -30,23 +30,26 @@ export function LoginModal() {
     };
   }, [closeLogin]);
 
-  const requestOtp = (e: React.FormEvent) => {
+  const channel = useEmail ? "email" : "phone";
+
+  const requestOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (!useEmail && !/^[6-9]\d{9}$/.test(phone)) return setError("Enter a valid 10-digit mobile number");
-    if (useEmail && !/^\S+@\S+\.\S+$/.test(email)) return setError("Enter a valid email address");
     setLoading(true);
-    setTimeout(() => { setLoading(false); setStage("otp"); }, 700);
+    const res = await requestOtpAction({ identifier, channel });
+    setLoading(false);
+    if (!res.ok) return setError(res.error);
+    setStage("otp");
   };
 
-  const verifyOtp = (e: React.FormEvent) => {
+  const verifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (otp !== "123456") return setError("Incorrect OTP. Demo OTP is 123456.");
     setLoading(true);
-    setTimeout(() => {
-      login(useEmail ? { name: email.split("@")[0], email } : { name: `Flipkart User ${phone.slice(-4)}`, phone });
-    }, 500);
+    const res = await verifyOtpAction({ identifier, channel, otp });
+    setLoading(false);
+    if (!res.ok) return setError(res.error);
+    if (res.data) login(res.data);
   };
 
   return (
@@ -85,11 +88,11 @@ export function LoginModal() {
                 <div className="mt-1 flex rounded-sm border border-gray-300 focus-within:border-brand focus-within:ring-1 focus-within:ring-brand">
                   {!useEmail && <span className="flex items-center border-r border-gray-300 bg-gray-50 px-3 text-sm">+91</span>}
                   <input
-                    ref={firstField}
+                    ref={fieldRef}
                     id="auth-id"
                     inputMode={useEmail ? "email" : "numeric"}
-                    value={useEmail ? email : phone}
-                    onChange={(e) => (useEmail ? setEmail(e.target.value) : setPhone(e.target.value.replace(/\D/g, "").slice(0, 10)))}
+                    value={identifier}
+                    onChange={(e) => setIdentifier(useEmail ? e.target.value : e.target.value.replace(/\D/g, "").slice(0, 10))}
                     className="h-11 w-full px-3 text-sm focus:outline-none"
                     placeholder={useEmail ? "you@example.com" : "10-digit mobile number"}
                   />
@@ -99,8 +102,11 @@ export function LoginModal() {
               <button type="button" onClick={() => { setUseEmail((v) => !v); setError(""); }} className="text-sm font-semibold text-brand hover:underline">
                 Use {useEmail ? "Phone Number" : "Email-ID"}
               </button>
+              <p className="rounded-sm bg-gray-50 px-3 py-2 text-[11px] leading-relaxed text-gray-600">
+                Demo: any valid mobile logs in as customer · <strong>9000000000</strong> or <strong>admin@kartora.com</strong> logs in as admin · OTP <strong>123456</strong>
+              </p>
               <p className="text-[11px] leading-relaxed text-gray-500">
-                By continuing, you confirm that you are above 18 years of age, and you agree to the Flipkart{" "}
+                By continuing, you confirm that you are above 18 years of age, and you agree to the Kartora{" "}
                 <span className="cursor-pointer text-brand">Terms of Use</span> and <span className="cursor-pointer text-brand">Privacy Policy</span>.
               </p>
               <Button type="submit" disabled={loading} className="w-full bg-[#fb641b] hover:bg-[#e85a15]">
@@ -111,14 +117,14 @@ export function LoginModal() {
             <form onSubmit={verifyOtp} className="space-y-5">
               <div>
                 <h3 className="text-lg font-semibold">Verify OTP</h3>
-                <p className="mt-1 text-sm text-gray-500">OTP sent to {useEmail ? email : `+91 ${phone}`}</p>
+                <p className="mt-1 text-sm text-gray-500">OTP sent to {useEmail ? identifier : `+91 ${identifier}`}</p>
                 <p className="mt-2 rounded-sm bg-brand-light px-3 py-2 text-xs font-semibold text-brand">Demo mode — use OTP 123456</p>
               </div>
               <div>
                 <label htmlFor="otp" className="text-xs font-semibold text-brand">One-time password</label>
                 <input
                   id="otp"
-                  ref={firstField}
+                  ref={fieldRef}
                   inputMode="numeric"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
@@ -130,7 +136,7 @@ export function LoginModal() {
               <Button type="submit" disabled={loading || otp.length !== 6} className="w-full bg-[#fb641b] hover:bg-[#e85a15]">
                 {loading ? "Verifying…" : "Verify & Login"}
               </Button>
-              <button type="button" onClick={() => setStage("input")} className="text-sm font-semibold text-brand hover:underline">Change number</button>
+              <button type="button" onClick={() => setStage("input")} className="text-sm font-semibold text-brand hover:underline">Change {useEmail ? "email" : "number"}</button>
             </form>
           )}
         </div>
