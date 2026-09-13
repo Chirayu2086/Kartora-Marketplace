@@ -45,7 +45,7 @@ export function LoginModal() {
     if (otp !== "123456") return setError("Incorrect OTP. Demo OTP is 123456.");
     setLoading(true);
     setTimeout(() => {
-      login(useEmail ? { name: email.split("@")[0], email } : { name: `Kartora User ${phone.slice(-4)}`, phone });
+      login(useEmail ? { name: email.split("@")[0], email } : { name: `Flipkart User ${phone.slice(-4)}`, phone });
     }, 500);
   };
 
@@ -100,7 +100,7 @@ export function LoginModal() {
                 Use {useEmail ? "Phone Number" : "Email-ID"}
               </button>
               <p className="text-[11px] leading-relaxed text-gray-500">
-                By continuing, you confirm that you are above 18 years of age, and you agree to the Kartora{" "}
+                By continuing, you confirm that you are above 18 years of age, and you agree to the Flipkart{" "}
                 <span className="cursor-pointer text-brand">Terms of Use</span> and <span className="cursor-pointer text-brand">Privacy Policy</span>.
               </p>
               <Button type="submit" disabled={loading} className="w-full bg-[#fb641b] hover:bg-[#e85a15]">

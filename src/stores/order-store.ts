@@ -29,6 +29,6 @@ export const useOrderStore = create<OrderState>()(
       },
       cancelOrder: (id) => set((s) => ({ orders: s.orders.map((o) => (o.id === id ? { ...o, status: "CANCELLED" } : o)) })),
     }),
-    { name: "kartora-orders" }
+    { name: "flipkart-orders" }
   )
 );

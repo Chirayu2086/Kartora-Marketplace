@@ -59,7 +59,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <section className="mt-4">
             <h2 className="mb-2 text-sm font-bold uppercase text-gray-600">Available Offers</h2>
             <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700">
-              <li><strong>Bank Offer:</strong> 10% instant discount on Kartora Pay Credit Cards, up to ₹1,500</li>
+              <li><strong>Bank Offer:</strong> 10% instant discount on Flipkart Pay Credit Cards, up to ₹1,500</li>
               <li><strong>Special Price:</strong> Extra {calculateDiscount(product.mrp, product.price)}% off (price inclusive of discount)</li>
               <li><strong>Coupon:</strong> Apply WELCOME10 for 10% off (max ₹500) on your first order</li>
             </ul>
@@ -72,7 +72,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </section>
 
           <p className="mt-4 flex items-center gap-1.5 text-sm text-gray-700">
-            Seller: <span className="font-semibold text-brand">Kartora Retail Pvt Ltd</span><BadgeCheck className="h-4 w-4 text-brand" />
+            Seller: <span className="font-semibold text-brand">Flipkart Retail Pvt Ltd</span><BadgeCheck className="h-4 w-4 text-brand" />
           </p>
 
           <div className="mt-6 lg:hidden"><PurchasePanel product={product} /></div>

@@ -28,6 +28,6 @@ export const useAuthStore = create<AuthState>()(
       login: (user) => set({ user, loginOpen: false }),
       logout: () => set({ user: null }),
     }),
-    { name: "kartora-session", partialize: (s) => ({ user: s.user }) as Partial<AuthState> }
+    { name: "flipkart-session", partialize: (s) => ({ user: s.user }) as Partial<AuthState> }
   )
 );

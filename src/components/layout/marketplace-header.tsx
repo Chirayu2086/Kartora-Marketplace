@@ -41,10 +41,15 @@ export function MarketplaceHeader() {
     <header className="sticky top-0 z-50">
       <div className="bg-brand text-white">
         <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-3 px-3 md:gap-6 md:px-4">
-          <Link href="/" className="flex shrink-0 items-end gap-1" aria-label="Kartora home">
-            <svg viewBox="0 0 64 64" className="h-8 w-8"><rect width="64" height="64" rx="12" fill="#fff" /><path d="M20 14v36M20 32l16-18M20 32l18 18" stroke="#2563eb" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" fill="none" /><circle cx="46" cy="18" r="5" fill="#f4690c" /></svg>
+          <Link href="/" className="flex shrink-0 items-end gap-1" aria-label="Flipkart home">
+            <svg viewBox="0 0 80 80" className="h-8 w-8" aria-hidden="true">
+              <rect width="80" height="80" rx="18" fill="#fff" />
+              <path d="M24 20h15.5c9.8 0 17.5 6.7 17.5 16.5 0 11.4-8.7 17.5-19.5 17.5H35v16h-11V20zm11 10v13h5.5c5.4 0 8.5-2.3 8.5-6.5S45.9 30 40.5 30H35z" fill="#1d4ed8"/>
+              <circle cx="59" cy="22" r="10" fill="#fbbf24" />
+              <path d="M59 12v20M49 22h20" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round"/>
+            </svg>
             <span className="flex flex-col leading-none">
-              <span className="text-lg font-bold italic tracking-tight">Kartora</span>
+              <span className="text-lg font-bold italic tracking-tight">Flipkart</span>
               <span className="text-[10px] italic text-amber-300">Explore Plus ✦</span>
             </span>
           </Link>

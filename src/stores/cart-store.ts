@@ -40,7 +40,7 @@ export const useCartStore = create<CartState>()(
       clearCoupon: () => set({ coupon: null }),
       clear: () => set({ items: [], coupon: null }),
     }),
-    { name: "kartora-cart" }
+    { name: "flipkart-cart" }
   )
 );
 

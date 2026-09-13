@@ -1,4 +1,4 @@
-# Kartora
+# Flipkart
 
 A production-oriented full-stack Indian e-commerce marketplace built with Next.js (App Router), TypeScript, Tailwind CSS, Prisma/PostgreSQL and Zustand. The UI follows a high-density marketplace design language (header + category nav + dense product grids + left filter sidebar + two-column login modal) with an original brand, original artwork (generated SVG product visuals) and fictional catalog data.
 

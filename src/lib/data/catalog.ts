@@ -116,7 +116,7 @@ function buildCatalog(): CatalogProduct[] {
           isAssured: rand() < 0.6,
           colors: COLORS.slice(0, 2 + Math.floor(rand() * 3)),
           sizes: cfg.sizes,
-          description: `${name} from ${brand}. Designed for everyday use with durable materials, a comfortable fit and a finish that holds up over time. Covered by a 1-year brand warranty and Kartora's 7-day replacement promise.`,
+          description: `${name} from ${brand}. Designed for everyday use with durable materials, a comfortable fit and a finish that holds up over time. Covered by a 1-year brand warranty and Flipkart's 7-day replacement promise.`,
           visual: { kind: leaf.visual, hue: Math.floor(rand() * 360) },
           createdAt: new Date(Date.UTC(2025, 0, 1) + Math.floor(rand() * 600) * 86400000).toISOString(),
           reviews: makeReviews(rand),

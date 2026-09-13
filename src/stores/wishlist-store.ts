@@ -18,6 +18,6 @@ export const useWishlistStore = create<WishlistState>()(
       add: (id) => set((s) => ({ ids: s.ids.includes(id) ? s.ids : [...s.ids, id] })),
       remove: (id) => set((s) => ({ ids: s.ids.filter((x) => x !== id) })),
     }),
-    { name: "kartora-wishlist" }
+    { name: "flipkart-wishlist" }
   )
 );
