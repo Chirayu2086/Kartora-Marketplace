@@ -7,9 +7,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role { CUSTOMER ADMIN }
-enum OrderStatus { PENDING CONFIRMED PROCESSING SHIPPED OUT_FOR_DELIVERY DELIVERED CANCELLED REFUNDED }
-enum PaymentStatus { PENDING COMPLETED FAILED REFUNDED }
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
 
 model User {
   id        String   @id @default(cuid())
@@ -86,11 +105,14 @@ model Product {
   category    Category  @relation(fields: [categoryId], references: [id])
   images      ProductImage[]
   variants    ProductVariant[]
-  reviews     Review[]
-  orderItems  OrderItem[]
-  cartItems   CartItem[]
+  reviews       Review[]
+  orderItems    OrderItem[]
+  cartItems     CartItem[]
   wishlistItems WishlistItem[]
-  @@index([slug]) @@index([brandId]) @@index([categoryId])
+
+  @@index([slug])
+  @@index([brandId])
+  @@index([categoryId])
 }
 
 model ProductImage {
@@ -173,7 +195,9 @@ model Order {
   address       Address       @relation(fields: [addressId], references: [id])
   items         OrderItem[]
   payment       Payment?
-  @@index([userId]) @@index([status])
+
+  @@index([userId])
+  @@index([status])
 }
 
 model OrderItem {

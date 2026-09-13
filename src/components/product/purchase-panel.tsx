@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/router";
 import { useNavigate } from "./nav-shim";
 import { Heart, ShoppingCart, Zap } from "lucide-react";
 import { useState } from "react";
@@ -29,7 +28,7 @@ export function PurchasePanel({ product, layout = "panel" }: { product: CatalogP
 
   const buyNow = () => {
     add({ productId: product.id, qty: 1, size, color });
-    nav("/checkout");
+    nav.push("/checkout");
   };
 
   if (layout === "bar") {
